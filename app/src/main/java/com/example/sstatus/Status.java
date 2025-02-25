@@ -31,13 +31,12 @@ public class Status extends AppCompatActivity {
     // Static Variables
     public static JSONArray RESPONSE = null;
     public static String DASHBOARD_TITLE = "";
-
+    // Data List
+    private final ArrayList<HashMap<String, String>> statusList = new ArrayList<>();
+    TextView statusTitle;
     // UI Elements
     private ListView listView;
     private MyAdapter myAdapter;
-
-    // Data List
-    private final ArrayList<HashMap<String, String>> statusList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +54,13 @@ public class Status extends AppCompatActivity {
         initializeView();
     }
 
+    @SuppressLint("SetTextI18n")
     private void initializeView() {
         listView = findViewById(R.id.listView);
+        statusTitle = findViewById(R.id.statusTitle);
+
+        statusTitle.setText(DASHBOARD_TITLE + " Quotes");
+
         myAdapter = new MyAdapter();
         listView.setAdapter(myAdapter);
         parseData();
@@ -101,7 +105,6 @@ public class Status extends AppCompatActivity {
                 }
 
 
-
             }
 
             Toast.makeText(this, "Dashboard Title: " + DASHBOARD_TITLE, Toast.LENGTH_SHORT).show();
@@ -132,8 +135,7 @@ public class Status extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             LayoutInflater layoutInflater = getLayoutInflater();
-            @SuppressLint("ViewHolder")
-            View myView = layoutInflater.inflate(R.layout.content_status, viewGroup, false);
+            @SuppressLint("ViewHolder") View myView = layoutInflater.inflate(R.layout.content_status, viewGroup, false);
 
             // UI Elements
             ImageView imageView = myView.findViewById(R.id.contentImageView);
