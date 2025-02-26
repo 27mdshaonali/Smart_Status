@@ -7,12 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     JSONArray STATUS_RESPONSE;
     ArrayList<HashMap<String, String>> dashboardList = new ArrayList<>();
     ArrayList<HashMap<String, String>> statusList = new ArrayList<>();
+    SearchView searchView;
     GridView gridView;
 
     @Override
@@ -56,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void initializeView() {
         gridView = findViewById(R.id.gridView);
+        searchView = findViewById(R.id.searchView);
+        searchViewImplementation();
         parseData();
     }
 
@@ -102,11 +108,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class MyAdapter extends BaseAdapter {
+    public class MyAdapter extends BaseAdapter implements Filterable {
         ArrayList<HashMap<String, String>> dataList;
+        ArrayList<HashMap<String, String>> fullList;
+        Filter filter;
 
         public MyAdapter(ArrayList<HashMap<String, String>> list) {
-            this.dataList = list;
+            this.dataList = new ArrayList<>(list);
+            this.fullList = new ArrayList<>(list);
         }
 
         @Override
@@ -159,5 +168,59 @@ public class MainActivity extends AppCompatActivity {
 
             return myView;
         }
+
+        @Override
+        public Filter getFilter() {
+            if (filter == null) {
+                filter = new Filter() {
+                    @Override
+                    protected FilterResults performFiltering(CharSequence constraint) {
+                        FilterResults results = new FilterResults();
+                        ArrayList<HashMap<String, String>> filteredList = new ArrayList<>();
+
+                        if (constraint == null || constraint.length() == 0) {
+                            filteredList.addAll(fullList);
+                        } else {
+                            String filterPattern = constraint.toString().toLowerCase().trim();
+                            for (HashMap<String, String> item : fullList) {
+                                if (item.get("dashboardItemTle").toLowerCase().contains(filterPattern)) {
+                                    filteredList.add(item);
+                                }
+                            }
+                        }
+
+                        results.values = filteredList;
+                        results.count = filteredList.size();
+                        return results;
+                    }
+
+                    @Override
+                    protected void publishResults(CharSequence constraint, FilterResults results) {
+                        dataList.clear();
+                        dataList.addAll((ArrayList<HashMap<String, String>>) results.values);
+                        notifyDataSetChanged();
+                    }
+                };
+            }
+            return filter;
+        }
     }
+
+    public void searchViewImplementation() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ((MyAdapter) gridView.getAdapter()).getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ((MyAdapter) gridView.getAdapter()).getFilter().filter(newText);
+                return false;
+            }
+        });
+    }
+
+
 }
