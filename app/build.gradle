@@ -50,4 +50,6 @@ dependencies {
     implementation "androidx.multidex:multidex:2.0.1"
     //noinspection UseTomlInstead
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    //noinspection UseTomlInstead
+    implementation "androidx.work:work-runtime:2.10.0"
 }

@@ -1,11 +1,13 @@
 package com.example.sstatus;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -63,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchView);
         searchViewImplementation();
         parseData();
+
+        searchView.clearFocus();
+        setupKeyboardBehavior(searchView);
     }
 
     public void parseData() {
@@ -106,6 +111,60 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(arrayRequest);
         requestQueue.add(arrayRequest2);
 
+    }
+
+
+    //===================================Softy Keyboard Starts===================================//
+    public void setupKeyboardBehavior(View inputView) {
+        inputView.setFocusable(false);
+        inputView.setFocusableInTouchMode(false);
+
+        inputView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setFocusable(true);
+                v.setFocusableInTouchMode(true);
+                v.requestFocus();
+                showKeyboard(v);
+            }
+        });
+
+        inputView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+    }
+
+    private void showKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //===================================Softy Keyboard Ends===================================//
+
+    public void searchViewImplementation() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ((MyAdapter) gridView.getAdapter()).getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ((MyAdapter) gridView.getAdapter()).getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     public class MyAdapter extends BaseAdapter implements Filterable {
@@ -204,22 +263,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return filter;
         }
-    }
-
-    public void searchViewImplementation() {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                ((MyAdapter) gridView.getAdapter()).getFilter().filter(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                ((MyAdapter) gridView.getAdapter()).getFilter().filter(newText);
-                return false;
-            }
-        });
     }
 
 

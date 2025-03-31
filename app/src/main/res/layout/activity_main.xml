@@ -17,14 +17,29 @@
         android:paddingEnd="10dp"
         tools:ignore="UselessParent">
 
+
         <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/searchView"
-            android:hint="Search Item"
-            app:defaultQueryHint="Search Item"
-            app:queryHint="Search Item"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            app:defaultQueryHint="Search Here"
+            app:hideNavigationIcon="true"
+            app:iconifiedByDefault="false"
+            app:queryHint="Search Here"
+            app:searchHintIcon="@drawable/shaon"
             tools:ignore="HardcodedText" />
+
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="Search Item"-->
+<!--            app:defaultQueryHint="Search Item"-->
+<!--            app:queryHint="Search Item"-->
+<!--            app:goIcon="@drawable/shaon"-->
+<!--            tools:ignore="HardcodedText" />-->
 
         <GridView
             android:layout_below="@id/searchView"
